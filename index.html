@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dkakeibo - Configurações Iniciais</title>
+    <link rel="stylesheet" href="styles-initial.css">
+</head>
+<body>
+    <div id="initial-settings">
+        <h1>Dkakeibo</h1>
+        <form id="settings-form">
+            <div>
+                <label for="salary">Salário:</label>
+                <input type="number" id="salary" placeholder="Informe seu salário" step="0.01" required>
+            </div>
+            <div>
+                <label for="fixed-expense">Gastos Fixos:</label>
+                <input type="text" id="fixed-expense" placeholder="Descrição do gasto fixo">
+                <input type="number" id="fixed-expense-amount" placeholder="Valor" step="0.01">
+                <button type="button" id="add-fixed-expense">Adicionar Gasto Fixo</button>
+            </div>
+            <ul id="fixed-expense-list"></ul>
+            <div>
+                <label for="goal">Objetivo de Final de Ano:</label>
+                <input type="text" id="goal" placeholder="Descrição do objetivo">
+                <input type="number" id="goal-amount" placeholder="Valor" step="0.01">
+                <button type="button" id="add-goal">Adicionar Objetivo</button>
+            </div>
+            <ul id="goal-list"></ul>
+            <button type="submit">Salvar e Ir para o Calendário</button>
+        </form>
+    </div>
+    <script src="initial-settings.js"></script>
+</body>
+</html>
