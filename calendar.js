@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const monthsDiv = document.getElementById('months');
     const popup = document.getElementById('popup');
+    const popupContent = document.getElementById('popup-content');
     const popupMonth = document.getElementById('popup-month');
     const expenseDescriptionInput = document.getElementById('expense-description');
     const expenseAmountInput = document.getElementById('expense-amount');
@@ -13,11 +14,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Load settings from local storage
     const loadSettings = () => {
-        const salary = parseFloat(localStorage.getItem('salary')) || 0;
+        const salary = localStorage.getItem('salary');
         const fixedExpenses = JSON.parse(localStorage.getItem('fixedExpenses')) || [];
         const goals = JSON.parse(localStorage.getItem('goals')) || [];
 
-        document.getElementById('salary-info').innerText = `Salário: R$${salary.toFixed(2)}`;
+        document.getElementById('salary-info').innerText = `Salário: R$${parseFloat(salary || 0).toFixed(2)}`;
         document.getElementById('fixed-expenses-info').innerText = `Gastos Fixos: R$${fixedExpenses.reduce((total, exp) => total + parseFloat(exp.amount), 0).toFixed(2)}`;
         document.getElementById('goals-info').innerText = `Objetivos: R$${goals.reduce((total, goal) => total + parseFloat(goal.amount), 0).toFixed(2)}`;
     };
@@ -38,7 +39,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const monthlyExpenses = JSON.parse(localStorage.getItem(`month-${monthIndex}`)) || [];
         const salary = parseFloat(localStorage.getItem('salary')) || 0;
 
-        popupMonth.innerText = document.querySelector(`#months div[data-month="${monthIndex}"]`).innerText;
+        // Ensure popupMonth is defined
+        const monthElement = document.querySelector(`#months div[data-month="${monthIndex}"]`);
+        if (!monthElement) {
+            console.error('Month element not found');
+            return;
+        }
+
+        popupMonth.innerText = monthElement.innerText;
         monthlyExpensesList.innerHTML = monthlyExpenses.map(exp => 
             `<p>${exp.description} - R$${parseFloat(exp.amount).toFixed(2)}</p>`
         ).join('');
@@ -66,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const totalExpenses = monthlyExpenses.reduce((total, exp) => total + parseFloat(exp.amount), 0);
 
             if (totalExpenses + amount <= salary) {
-                monthlyExpenses.push({ description, amount });
+                monthlyExpenses.push({ description, amount: amount.toFixed(2) });
                 localStorage.setItem(`month-${monthIndex}`, JSON.stringify(monthlyExpenses));
                 openPopup(monthIndex); // Refresh the popup to show the updated expenses
                 updateTotalPositive();
