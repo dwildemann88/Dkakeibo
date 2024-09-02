@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('fixed-expenses-info').innerText = `Gastos Fixos: R$${fixedExpenses.reduce((total, exp) => total + parseFloat(exp.amount), 0).toFixed(2)}`;
         document.getElementById('goals-info').innerText = `Objetivos: R$${goals.reduce((total, goal) => total + parseFloat(goal.amount), 0).toFixed(2)}`;
         savingsInfo.innerText = `Total Guardado: R$${totalSaved.toFixed(2)}`;
+        updateSavedAmountsList();
     };
 
     // Create month buttons
@@ -51,8 +52,9 @@ document.addEventListener('DOMContentLoaded', () => {
         popupMonth.dataset.month = monthIndex; // Store month index in popupMonth dataset
 
         const monthlyExpenses = JSON.parse(localStorage.getItem(`month-${monthIndex}`)) || [];
-        monthlyExpensesList.innerHTML = monthlyExpenses.map(exp => 
-            `<p>${exp.description} - R$${parseFloat(exp.amount).toFixed(2)}</p>`
+        monthlyExpensesList.innerHTML = monthlyExpenses.map((exp, index) => 
+            `<p>${exp.description} - R$${parseFloat(exp.amount).toFixed(2)}
+            <button class="delete-expense" data-month="${monthIndex}" data-index="${index}">Excluir</button></p>`
         ).join('');
 
         const salary = parseFloat(localStorage.getItem('salary')) || 0;
@@ -106,6 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
             savedAmounts.push(saveAmount.toFixed(2));
             localStorage.setItem('savedAmounts', JSON.stringify(savedAmounts));
 
+            updateSavedAmountsList();
             const totalSaved = savedAmounts.reduce((total, amount) => total + parseFloat(amount), 0);
             savingsInfo.innerText = `Total Guardado: R$${totalSaved.toFixed(2)}`;
             saveAmountInput.value = '';
@@ -115,6 +118,52 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             statusMessage.innerText = 'Por favor, insira um valor válido para guardar.';
             statusMessage.style.color = 'red';
+        }
+    });
+
+    // Delete expense
+    const deleteExpense = (monthIndex, expenseIndex) => {
+        let monthlyExpenses = JSON.parse(localStorage.getItem(`month-${monthIndex}`)) || [];
+        monthlyExpenses.splice(expenseIndex, 1); // Remove the expense
+        localStorage.setItem(`month-${monthIndex}`, JSON.stringify(monthlyExpenses));
+        openPopup(monthIndex); // Refresh the popup to show the updated expenses
+        updateTotalPositive();
+    };
+
+    // Delete saved amount
+    const deleteSavedAmount = (index) => {
+        let savedAmounts = JSON.parse(localStorage.getItem('savedAmounts')) || [];
+        savedAmounts.splice(index, 1); // Remove the saved amount
+        localStorage.setItem('savedAmounts', JSON.stringify(savedAmounts));
+
+        updateSavedAmountsList();
+        updateGoalProgress();
+    };
+
+    // Update saved amounts list
+    const updateSavedAmountsList = () => {
+        const savedAmounts = JSON.parse(localStorage.getItem('savedAmounts')) || [];
+        savingsInfo.innerHTML = `Total Guardado: R$${savedAmounts.reduce((total, amount) => total + parseFloat(amount), 0).toFixed(2)}
+        <ul>${savedAmounts.map((amount, index) =>
+            `<li>R$${parseFloat(amount).toFixed(2)}
+            <button class="delete-saved" data-index="${index}">Excluir</button></li>`
+        ).join('')}</ul>`;
+    };
+
+    // Event delegation for deleting expenses
+    monthlyExpensesList.addEventListener('click', (event) => {
+        if (event.target.classList.contains('delete-expense')) {
+            const monthIndex = parseInt(event.target.dataset.month);
+            const expenseIndex = parseInt(event.target.dataset.index);
+            deleteExpense(monthIndex, expenseIndex);
+        }
+    });
+
+    // Event delegation for deleting saved amounts
+    savingsInfo.addEventListener('click', (event) => {
+        if (event.target.classList.contains('delete-saved')) {
+            const index = parseInt(event.target.dataset.index);
+            deleteSavedAmount(index);
         }
     });
 
@@ -151,7 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (totalGoal > 0) {
             const progress = totalSaved / totalGoal * 100;
             const progressText = `Você está ${progress.toFixed(2)}% do seu objetivo.`;
-            savingsInfo.innerText += ` | ${progressText}`;
+            savingsInfo.innerHTML += ` | ${progressText}`;
         }
     };
 
@@ -160,6 +209,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const monthIndex = event.target.dataset.month;
         if (monthIndex !== undefined) {
             openPopup(parseInt(monthIndex));
+        }
+    });
+    const clearAllButton = document.getElementById('clear-all');
+
+    // Clear all data and return to main page
+    clearAllButton.addEventListener('click', () => {
+        if (confirm('Você tem certeza de que deseja limpar todos os dados e voltar para a página inicial?')) {
+            localStorage.clear(); // Clear all local storage
+            window.location.href = 'index.html'; // Redirect to the main page
         }
     });
 
