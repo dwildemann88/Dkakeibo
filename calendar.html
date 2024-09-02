@@ -33,7 +33,18 @@
                 <p id="remaining-salary">Salário Restante: R$<span id="remaining-salary-amount">0.00</span></p>
             </div>
         </div>
-        
+        <!-- Adicionar esta seção ao final do #calendar -->
+    <div id="save-section">
+        <h2>Guardar Valor</h2>
+        <form id="save-form">
+            <label for="save-amount">Valor a Guardar:</label>
+            <input type="number" id="save-amount" step="0.01" required>
+            <button type="button" id="save-button">Guardar Valor</button>
+        </form>
+        <p id="savings-info"></p>
+    </div>
+
+
         
         <p id="total-positive">Total de Valores Positivos: R$<span id="total-positive-amount">0.00</span></p>
     </div>

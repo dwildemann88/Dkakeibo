@@ -109,3 +109,48 @@ button#close-popup:hover {
         width: 90%;
     }
 }
+
+/* Seção de guardar valor */
+#save-section {
+    margin-top: 20px;
+    padding: 10px;
+    border-top: 1px solid #ddd;
+}
+
+#save-section h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+#save-section form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#save-section input {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 100%;
+}
+
+#save-section button {
+    padding: 10px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#save-section button:hover {
+    background-color: #45a049;
+}
+
+#savings-info {
+    margin-top: 10px;
+    font-size: 16px;
+}
